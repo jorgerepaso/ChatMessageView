@@ -8,6 +8,10 @@ import java.util.*
  */
 class DateFormatter : ITimeFormatter {
     override fun getFormattedTimeText(createdAt: Calendar): String {
-        return TimeUtils.calendarToString(createdAt, "MMM. dd, yyyy")
+        if (TimeUtils.isSameDay(createdAt, Calendar.getInstance())) {
+            return "Today ${TimeUtils.calendarToString(createdAt, "hh:mm a")}"
+        } else {
+            return TimeUtils.calendarToString(createdAt, "MMM dd, yyyy hh:mm a")
+        }
     }
 }

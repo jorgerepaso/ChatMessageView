@@ -1,6 +1,7 @@
 package com.github.bassaer.chatmessageview.util
 
 import android.annotation.SuppressLint
+import android.util.Log
 
 import java.text.SimpleDateFormat
 import java.util.*
@@ -19,7 +20,7 @@ object TimeUtils {
      */
     @SuppressLint("SimpleDateFormat")
     fun calendarToString(calendar: Calendar, format: String?): String {
-        val sdf = SimpleDateFormat( format ?: "HH:mm", Locale.ENGLISH)
+        val sdf = SimpleDateFormat(format ?: "HH:mm", Locale.ENGLISH)
         return sdf.format(calendar.time)
     }
 
@@ -37,9 +38,16 @@ object TimeUtils {
     }
 
     @JvmStatic
+    fun isDisplayTimeInterval(prev: Calendar, now: Calendar, interval: Long): Boolean {
+        val diff = now.timeInMillis - prev.timeInMillis
+        Log.e("TAG ", "time diff ${diff} interval ${interval} ${(diff < interval)}")
+        return (diff < interval)
+    }
+
+    @JvmStatic
     fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
         return cal1.get(Calendar.ERA) == cal2.get(Calendar.ERA) &&
-                cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
+            cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+            cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
     }
 }

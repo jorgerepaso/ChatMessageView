@@ -40,6 +40,8 @@ class MessageView : ListView, View.OnFocusChangeListener {
      */
     private var refreshInterval: Long = 60000
 
+    private var timeInterval: Long = 15 * 60 * 1000
+
     private var attribute: Attribute
 
     interface OnKeyboardAppearListener {
@@ -103,12 +105,11 @@ class MessageView : ListView, View.OnFocusChangeListener {
     }
 
     /**
-    * Dynamically update message status and refresh, updating the status icon
-    * @param message message to update
-    * @param status new status to be applied
-    */
-    fun updateMessageStatus(message: Message, status: Int)
-    {
+     * Dynamically update message status and refresh, updating the status icon
+     * @param message message to update
+     * @param status new status to be applied
+     */
+    fun updateMessageStatus(message: Message, status: Int) {
         val indexOfMessage = messageList.indexOf(message)
         val messageToUpdate = messageList[indexOfMessage]
         messageToUpdate.status = status
@@ -128,7 +129,7 @@ class MessageView : ListView, View.OnFocusChangeListener {
             return
         }
         val prevMessage = messageList[messageList.size - 2]
-        if (!TimeUtils.isSameDay(prevMessage.sendTime, message.sendTime)) {
+        if (!TimeUtils.isDisplayTimeInterval(prevMessage.sendTime, message.sendTime, timeInterval)) {
             chatList.add(message.dateSeparateText)
         }
         chatList.add(message)
@@ -164,7 +165,7 @@ class MessageView : ListView, View.OnFocusChangeListener {
         for (i in 1 until list.size) {
             val prevMessage = list[i - 1]
             val currMessage = list[i]
-            if (!TimeUtils.isSameDay(prevMessage.sendTime, currMessage.sendTime)) {
+            if (!TimeUtils.isDisplayTimeInterval(prevMessage.sendTime, currMessage.sendTime, timeInterval)) {
                 result.add(currMessage.dateSeparateText)
             }
             result.add(currMessage)
@@ -264,6 +265,10 @@ class MessageView : ListView, View.OnFocusChangeListener {
 
     fun setRefreshInterval(refreshInterval: Long) {
         this.refreshInterval = refreshInterval
+    }
+
+    fun setTimeInterval(timeInterval: Long) {
+        this.timeInterval = timeInterval
     }
 
     fun setMessageFontSize(size: Float) {

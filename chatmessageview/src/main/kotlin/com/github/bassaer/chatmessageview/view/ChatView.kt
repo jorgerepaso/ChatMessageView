@@ -91,8 +91,8 @@ class ChatView : LinearLayout {
     private fun hideKeyboard() {
         //Hide keyboard
         inputMethodManager.hideSoftInputFromWindow(
-                messageView.windowToken,
-                InputMethodManager.HIDE_NOT_ALWAYS)
+            messageView.windowToken,
+            InputMethodManager.HIDE_NOT_ALWAYS)
         //Move focus to background
         messageView.requestFocus()
     }
@@ -216,7 +216,7 @@ class ChatView : LinearLayout {
         messageView.setMessageStatusColor(color)
     }
 
-    fun setMessageStatusColor(color: Int){
+    fun setMessageStatusColor(color: Int) {
         messageView.setMessageStatusColor(color)
     }
 
@@ -322,6 +322,10 @@ class ChatView : LinearLayout {
 
     fun setDateSeparatorFontSize(size: Float) {
         messageView.setDateSeparatorFontSize(size)
+    }
+
+    fun setTimeInterval(refreshInterval: Long) {
+        messageView.setTimeInterval(refreshInterval)
     }
 
     fun getMessageView(): MessageView = messageView

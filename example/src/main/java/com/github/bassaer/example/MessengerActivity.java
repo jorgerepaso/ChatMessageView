@@ -17,9 +17,13 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.VisibleForTesting;
+import androidx.core.content.ContextCompat;
+
 import com.github.bassaer.chatmessageview.model.IChatUser;
 import com.github.bassaer.chatmessageview.model.Message;
 import com.github.bassaer.chatmessageview.util.ChatBot;
+import com.github.bassaer.chatmessageview.util.DateFormatter;
 import com.github.bassaer.chatmessageview.view.ChatView;
 import com.github.bassaer.chatmessageview.view.MessageView;
 
@@ -27,9 +31,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import androidx.annotation.VisibleForTesting;
-import androidx.core.content.ContextCompat;
 
 /**
  * Simple chat example activity
@@ -42,7 +43,7 @@ public class MessengerActivity extends Activity {
     @VisibleForTesting
     protected static final int LEFT_BUBBLE_COLOR = R.color.gray300;
     @VisibleForTesting
-    protected static final int BACKGROUND_COLOR = R.color.blueGray400;
+    protected static final int BACKGROUND_COLOR = Color.WHITE;
     @VisibleForTesting
     protected static final int SEND_BUTTON_COLOR = R.color.blueGray500;
     @VisibleForTesting
@@ -54,13 +55,13 @@ public class MessengerActivity extends Activity {
     @VisibleForTesting
     protected static final int LEFT_MESSAGE_TEXT_COLOR = Color.BLACK;
     @VisibleForTesting
-    protected static final int USERNAME_TEXT_COLOR = Color.WHITE;
+    protected static final int USERNAME_TEXT_COLOR = Color.BLACK;
     @VisibleForTesting
-    protected static final int SEND_TIME_TEXT_COLOR = Color.WHITE;
+    protected static final int SEND_TIME_TEXT_COLOR = Color.BLACK;
     @VisibleForTesting
-    protected static final int DATA_SEPARATOR_COLOR = Color.WHITE;
+    protected static final int DATA_SEPARATOR_COLOR = Color.BLACK;
     @VisibleForTesting
-    protected static final int MESSAGE_STATUS_TEXT_COLOR = Color.WHITE;
+    protected static final int MESSAGE_STATUS_TEXT_COLOR = Color.BLACK;
     @VisibleForTesting
     protected static final String INPUT_TEXT_HINT = "New message..";
     @VisibleForTesting
@@ -87,9 +88,9 @@ public class MessengerActivity extends Activity {
         loadMessages();
 
         //Set UI parameters if you need
-        mChatView.setRightBubbleColor(ContextCompat.getColor(this,RIGHT_BUBBLE_COLOR));
+        mChatView.setRightBubbleColor(ContextCompat.getColor(this, RIGHT_BUBBLE_COLOR));
         mChatView.setLeftBubbleColor(ContextCompat.getColor(this, LEFT_BUBBLE_COLOR));
-        mChatView.setBackgroundColor(ContextCompat.getColor(this, BACKGROUND_COLOR));
+        mChatView.setBackgroundColor(BACKGROUND_COLOR);
         mChatView.setSendButtonColor(ContextCompat.getColor(this, SEND_BUTTON_COLOR));
         mChatView.setSendIcon(SEND_ICON);
         mChatView.setOptionIcon(R.drawable.ic_account_circle);
@@ -109,15 +110,14 @@ public class MessengerActivity extends Activity {
         mChatView.setInputTextColor(ContextCompat.getColor(this, R.color.red500));
         mChatView.setInputTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
 
-
         mChatView.setOnBubbleClickListener(new Message.OnBubbleClickListener() {
             @Override
             public void onClick(Message message) {
                 mChatView.updateMessageStatus(message, MyMessageStatusFormatter.STATUS_SEEN);
                 Toast.makeText(
-                        MessengerActivity.this,
-                        "click : " + message.getUser().getName() + " - " + message.getText(),
-                        Toast.LENGTH_SHORT
+                    MessengerActivity.this,
+                    "click : " + message.getUser().getName() + " - " + message.getText(),
+                    Toast.LENGTH_SHORT
                 ).show();
             }
         });
@@ -126,9 +126,9 @@ public class MessengerActivity extends Activity {
             @Override
             public void onIconClick(Message message) {
                 Toast.makeText(
-                        MessengerActivity.this,
-                        "click : icon " + message.getUser().getName(),
-                        Toast.LENGTH_SHORT
+                    MessengerActivity.this,
+                    "click : icon " + message.getUser().getName(),
+                    Toast.LENGTH_SHORT
                 ).show();
             }
         });
@@ -137,9 +137,9 @@ public class MessengerActivity extends Activity {
             @Override
             public void onIconLongClick(Message message) {
                 Toast.makeText(
-                        MessengerActivity.this,
-                        "Removed this message \n" + message.getText(),
-                        Toast.LENGTH_SHORT
+                    MessengerActivity.this,
+                    "Removed this message \n" + message.getText(),
+                    Toast.LENGTH_SHORT
                 ).show();
                 mChatView.getMessageView().remove(message);
             }
@@ -152,15 +152,20 @@ public class MessengerActivity extends Activity {
                 initUsers();
                 //new message
                 Message message = new Message.Builder()
-                        .setUser(mUsers.get(0))
-                        .setRight(true)
-                        .setText(mChatView.getInputText())
-                        .hideIcon(true)
-                        .setStatusIconFormatter(new MyMessageStatusFormatter(MessengerActivity.this))
-                        .setStatusTextFormatter(new MyMessageStatusFormatter(MessengerActivity.this))
-                        .setStatusStyle(Message.Companion.getSTATUS_ICON())
-                        .setStatus(MyMessageStatusFormatter.STATUS_DELIVERED)
-                        .build();
+                    .setUser(mUsers.get(0))
+                    .setRight(true)
+                    .setText(mChatView.getInputText())
+                    .hideIcon(false)
+                    .setDateCell(true)
+                    .setUsernameVisibility(false)
+                    .setStatusStyle(Message.Companion.getSTATUS_NONE())
+                    .setSendTimeFormatter(new MyTimeFormatter())
+                    .setDateFormatter(new DateFormatter())
+                    .build();
+
+//                Message message = new Message.Builder()
+//                    .setDateCell(true)
+//                    .build();
 
                 //Set to chat view
                 mChatView.send(message);
@@ -202,16 +207,16 @@ public class MessengerActivity extends Activity {
 
             //Receive message
             final Message receivedMessage = new Message.Builder()
-                    .setUser(mUsers.get(1))
-                    .setRight(false)
-                    .setText(ChatBot.INSTANCE.talk(mUsers.get(0).getName(), sendText))
-                    .setStatusIconFormatter(new MyMessageStatusFormatter(MessengerActivity.this))
-                    .setStatusTextFormatter(new MyMessageStatusFormatter(MessengerActivity.this))
-                    .setStatusStyle(Message.Companion.getSTATUS_ICON())
-                    .setStatus(MyMessageStatusFormatter.STATUS_DELIVERED)
-                    .build();
+                .setUser(mUsers.get(1))
+                .setRight(false)
+                .setText(ChatBot.INSTANCE.talk(mUsers.get(0).getName(), sendText))
+                .setStatusStyle(Message.Companion.getSTATUS_NONE())
+                .setSendTimeFormatter(new MyTimeFormatter())
+                .setDateFormatter(new DateFormatter())
+                .setUsernameVisibility(false)
+                .build();
 
-            if (sendText.equals( Message.Type.PICTURE.name())) {
+            if (sendText.equals(Message.Type.PICTURE.name())) {
                 receivedMessage.setText("Nice!");
             }
 
@@ -241,16 +246,18 @@ public class MessengerActivity extends Activity {
         try {
             Bitmap picture = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
             Message message = new Message.Builder()
-                    .setRight(true)
-                    .setText(Message.Type.PICTURE.name())
-                    .setUser(mUsers.get(0))
-                    .hideIcon(true)
-                    .setPicture(picture)
-                    .setType(Message.Type.PICTURE)
-                    .setStatusIconFormatter(new MyMessageStatusFormatter(MessengerActivity.this))
-                    .setStatusStyle(Message.Companion.getSTATUS_ICON())
-                    .setStatus(MyMessageStatusFormatter.STATUS_DELIVERED)
-                    .build();
+                .setRight(true)
+                .setText(Message.Type.PICTURE.name())
+                .setUser(mUsers.get(0))
+                .hideIcon(false)
+                .setPicture(picture)
+                .setUsernameVisibility(false)
+                .setType(Message.Type.PICTURE)
+                .setStatusStyle(Message.Companion.getSTATUS_NONE())
+                .setSendTimeFormatter(new MyTimeFormatter())
+                .setDateFormatter(new DateFormatter())
+                .build();
+
             mChatView.send(message);
             //Add message list
             mMessageList.add(message);
@@ -299,13 +306,12 @@ public class MessengerActivity extends Activity {
                         message.getUser().setIcon(user.getIcon());
                     }
                 }
-                if (!message.isDateCell() && message.isRight()) {
-                    message.hideIcon(true);
-
-                }
-                message.setStatusStyle(Message.Companion.getSTATUS_ICON_RIGHT_ONLY());
-                message.setStatusIconFormatter(new MyMessageStatusFormatter(this));
-                message.setStatus(MyMessageStatusFormatter.STATUS_DELIVERED);
+                message.setStatusStyle(Message.Companion.getSTATUS_NONE());
+                message.setUsernameVisibility(false);
+                message.setSendTimeFormatter(new MyTimeFormatter());
+                message.setDateFormatter(new DateFormatter());
+                message.setDateCell(true);
+                message.setDateFormatter(new DateFormatter());
                 messages.add(message);
             }
         }
@@ -341,25 +347,25 @@ public class MessengerActivity extends Activity {
 
     private void showDialog() {
         final String[] items = {
-                getString(R.string.send_picture),
-                getString(R.string.clear_messages)
+            getString(R.string.send_picture),
+            getString(R.string.clear_messages)
         };
 
         new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.options))
-                .setItems(items, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int position) {
-                        switch (position) {
-                            case 0 :
-                                openGallery();
-                                break;
-                            case 1:
-                                mChatView.getMessageView().removeAll();
-                                break;
-                        }
+            .setTitle(getString(R.string.options))
+            .setItems(items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int position) {
+                    switch (position) {
+                        case 0:
+                            openGallery();
+                            break;
+                        case 1:
+                            mChatView.getMessageView().removeAll();
+                            break;
                     }
-                })
-                .show();
+                }
+            })
+            .show();
     }
 }
