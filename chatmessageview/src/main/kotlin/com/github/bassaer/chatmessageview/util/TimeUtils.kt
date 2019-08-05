@@ -1,8 +1,6 @@
 package com.github.bassaer.chatmessageview.util
 
 import android.annotation.SuppressLint
-import android.util.Log
-
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -40,7 +38,6 @@ object TimeUtils {
     @JvmStatic
     fun isDisplayTimeInterval(prev: Calendar, now: Calendar, interval: Long): Boolean {
         val diff = now.timeInMillis - prev.timeInMillis
-        Log.e("TAG ", "time diff ${diff} interval ${interval} ${(diff < interval)}")
         return (diff < interval)
     }
 

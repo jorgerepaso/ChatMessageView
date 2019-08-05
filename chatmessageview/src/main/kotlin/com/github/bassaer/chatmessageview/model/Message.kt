@@ -121,7 +121,8 @@ class Message {
         TEXT,
         PICTURE,
         MAP,
-        LINK
+        LINK,
+        HEADER
     }
 
     /**

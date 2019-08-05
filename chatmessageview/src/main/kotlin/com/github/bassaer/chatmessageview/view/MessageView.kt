@@ -5,15 +5,12 @@ import android.os.Handler
 import android.util.AttributeSet
 import android.view.View
 import android.widget.ListView
-
 import com.github.bassaer.chatmessageview.model.Attribute
 import com.github.bassaer.chatmessageview.model.Message
 import com.github.bassaer.chatmessageview.util.MessageDateComparator
 import com.github.bassaer.chatmessageview.util.TimeUtils
-
 import java.lang.ref.WeakReference
 import java.util.*
-
 import kotlin.collections.ArrayList
 
 /**
@@ -168,7 +165,14 @@ class MessageView : ListView, View.OnFocusChangeListener {
             if (!TimeUtils.isDisplayTimeInterval(prevMessage.sendTime, currMessage.sendTime, timeInterval)) {
                 result.add(currMessage.dateSeparateText)
             }
-            result.add(currMessage)
+
+            if (currMessage.type == Message.Type.HEADER) {
+                result.add(currMessage.text!!)
+            } else {
+                result.add(currMessage)
+            }
+
+
         }
         return result
     }
