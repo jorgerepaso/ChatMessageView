@@ -1,6 +1,7 @@
 package com.github.bassaer.chatmessageview.view
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.util.AttributeSet
 import android.view.View
@@ -217,6 +218,14 @@ class MessageView : ListView, View.OnFocusChangeListener {
 
     fun setRightBubbleColor(color: Int) {
         messageAdapter.setRightBubbleColor(color)
+    }
+
+    fun setLeftBgDrawable(drawable: Drawable) {
+        messageAdapter.setLeftBgDrawable(drawable)
+    }
+
+    fun setRightBgDrawable(drawable: Drawable) {
+        messageAdapter.setRightBgDrawable(drawable)
     }
 
     fun setUsernameTextColor(color: Int) {

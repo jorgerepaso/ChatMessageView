@@ -105,6 +105,14 @@ class ChatView : LinearLayout {
         messageView.setRightBubbleColor(color)
     }
 
+    fun setLeftBgDrawable(drawable: Drawable) {
+        messageView.setLeftBgDrawable(drawable)
+    }
+
+    fun setRightBgdrawable(drawable: Drawable) {
+        messageView.setRightBgDrawable(drawable)
+    }
+
 
     /**
      * Set message to right side
