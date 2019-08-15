@@ -23,6 +23,7 @@
     <color name="blueGray500">#607D8B</color>
 
     <!-- Bubble color -->
-    <color name="default_left_bubble_color">@color/button_material_light</color>
+    <color name="default_left_bubble_color">#f3f4f5</color>
+    <color name="default_left_text_color">#3e4142</color>
     <color name="default_right_bubble_color">@color/green500</color>
 </resources>

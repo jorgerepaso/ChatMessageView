@@ -45,7 +45,7 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
     private var sendTimeTextColor = ContextCompat.getColor(getContext(), R.color.blueGray500)
     private var dateLabelColor = ContextCompat.getColor(getContext(), R.color.blueGray500)
     private var rightMessageTextColor = Color.WHITE
-    private var leftMessageTextColor = Color.BLACK
+    private var leftMessageTextColor = ContextCompat.getColor(getContext(), R.color.default_left_text_color)
     private var leftBubbleColor: Int = 0
     private var rightBubbleColor: Int = 0
     private var statusColor = ContextCompat.getColor(getContext(), R.color.blueGray500)
@@ -215,9 +215,14 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
                             messageViewHolder.messageLink?.background
                         )
                         //Set message text color
-                        messageViewHolder.messageLink?.setTextColor(
-                            if (message.isRight) rightMessageTextColor else leftMessageTextColor
-                        )
+                        if (user.getTextColor() != null) {
+                            messageViewHolder.messageLink?.setTextColor(user.getTextColor()!!)
+                        } else {
+                            messageViewHolder.messageLink?.setTextColor(
+                                if (message.isRight) rightMessageTextColor else leftMessageTextColor
+                            )
+                        }
+
                         if (user.getDrawable() != null) {
                             messageViewHolder.messageLink?.setBackgroundDrawable(user.getDrawable())
                         } else {
@@ -226,7 +231,6 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
                             } else if (leftBgDrawable != null) {
                                 messageViewHolder.messageLink?.setBackgroundDrawable(leftBgDrawable)
                             } else {
-
                             }
                         }
                     }
@@ -243,9 +247,14 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
                             if (message.isRight) rightBubbleColor else leftBubbleColor,
                             messageViewHolder.messageText?.background
                         )
-                        messageViewHolder.messageText?.setTextColor(
-                            if (message.isRight) rightMessageTextColor else leftMessageTextColor
-                        )
+
+                        if (user.getTextColor() != null) {
+                            messageViewHolder.messageText?.setTextColor(user.getTextColor()!!)
+                        } else {
+                            messageViewHolder.messageText?.setTextColor(
+                                if (message.isRight) rightMessageTextColor else leftMessageTextColor
+                            )
+                        }
 
                         if (user.getDrawable() != null) {
                             messageViewHolder.messageText?.setBackgroundDrawable(user.getDrawable())

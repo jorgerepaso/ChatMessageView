@@ -97,15 +97,12 @@ public class MessengerActivity extends Activity {
         mChatView.setOptionButtonColor(OPTION_BUTTON_COLOR);
         mChatView.setRightMessageTextColor(RIGHT_MESSAGE_TEXT_COLOR);
         mChatView.setLeftMessageTextColor(LEFT_MESSAGE_TEXT_COLOR);
-        mChatView.setUsernameTextColor(USERNAME_TEXT_COLOR);
         mChatView.setSendTimeTextColor(SEND_TIME_TEXT_COLOR);
         mChatView.setDateSeparatorColor(DATA_SEPARATOR_COLOR);
-        mChatView.setMessageStatusTextColor(MESSAGE_STATUS_TEXT_COLOR);
         mChatView.setInputTextHint(INPUT_TEXT_HINT);
         mChatView.setMessageMarginTop(MESSAGE_MARGIN);
         mChatView.setMessageMarginBottom(MESSAGE_MARGIN);
         mChatView.setMaxInputLine(5);
-        mChatView.setUsernameFontSize(getResources().getDimension(R.dimen.font_small));
         mChatView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         mChatView.setInputTextColor(ContextCompat.getColor(this, R.color.red500));
         mChatView.setInputTextSize(TypedValue.COMPLEX_UNIT_SP, 20);

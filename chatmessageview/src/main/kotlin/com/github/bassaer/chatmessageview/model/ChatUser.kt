@@ -28,4 +28,8 @@ class ChatUser(internal var id: Int?, internal var name: String, internal var ic
     override fun getDrawable(): Drawable? {
         return null
     }
+
+    override fun getTextColor(): Int? {
+        return null
+    }
 }

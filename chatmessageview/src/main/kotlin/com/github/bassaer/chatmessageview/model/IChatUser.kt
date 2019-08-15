@@ -10,4 +10,5 @@ interface IChatUser {
     fun setIcon(bmp: Bitmap)
     fun getUrl(): String?
     fun getDrawable(): Drawable?
+    fun getTextColor(): Int?
 }
