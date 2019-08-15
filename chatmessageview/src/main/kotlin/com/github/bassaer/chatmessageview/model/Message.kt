@@ -21,7 +21,7 @@ class Message {
     /**
      * Whether sender username is shown or not
      */
-    var usernameVisibility = true
+    var usernameVisibility = false
     /**
      * If true, there is the icon space but invisible.
      */
@@ -137,7 +137,6 @@ class Message {
         sendTime = Calendar.getInstance()
         mSendTimeFormatter = DefaultTimeFormatter()
         mDateFormatter = DateFormatter()
-        mSendTimeFormatter = DefaultTimeFormatter()
         type = Type.TEXT
     }
 

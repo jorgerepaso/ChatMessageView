@@ -313,12 +313,13 @@ public class MessengerActivity extends Activity {
                         message.getUser().setIcon(user.getIcon());
                     }
                 }
-                message.setStatusStyle(Message.Companion.getSTATUS_NONE());
-                message.setUsernameVisibility(false);
-                message.setSendTimeFormatter(new MyTimeFormatter());
-                message.setDateFormatter(new DateFormatter());
-                message.setDateCell(true);
-                message.setDateFormatter(new DateFormatter());
+//                message.setStatusStyle(Message.Companion.getSTATUS_NONE());
+//                message.setUsernameVisibility(false);
+//                message.setSendTimeFormatter(new MyTimeFormatter());
+//                message.setDateFormatter(new DateFormatter());
+//                message.setDateCell(true);
+//                message.setDateFormatter(new DateFormatter());
+
                 messages.add(message);
             }
         }

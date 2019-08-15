@@ -49,4 +49,10 @@ public class User implements IChatUser {
     public Drawable getDrawable() {
         return null;
     }
+
+    @Nullable
+    @Override
+    public Integer getTextColor() {
+        return null;
+    }
 }
