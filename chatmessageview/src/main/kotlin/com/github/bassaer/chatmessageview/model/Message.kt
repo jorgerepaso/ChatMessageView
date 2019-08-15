@@ -97,6 +97,11 @@ class Message {
     var picture: Bitmap? = null
 
     /**
+     * PICTURE message
+     */
+    var photoUrl: String? = null
+
+    /**
      * Message type
      */
     var type: Type? = null
@@ -220,6 +225,11 @@ class Message {
 
         fun setPicture(picture: Bitmap): Builder {
             message.picture = picture
+            return this
+        }
+
+        fun setPicture(photoUrl: String): Builder {
+            message.photoUrl = photoUrl
             return this
         }
 

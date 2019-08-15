@@ -20,6 +20,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import com.github.bassaer.chatmessageview.R
 import com.github.bassaer.chatmessageview.model.Attribute
 import com.github.bassaer.chatmessageview.model.Message
+import com.squareup.picasso.Picasso
 
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -157,6 +158,8 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
                     //if false, set default icon.
                     if (user.getIcon() != null) {
                         messageViewHolder.icon?.setImageBitmap(user.getIcon())
+                    } else {
+                        Picasso.get().load(user.getUrl()).into(messageViewHolder.icon)
                     }
 
                 } else {
@@ -192,9 +195,12 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
                         if (message.isRight) R.layout.message_picture_right else R.layout.message_picture_left,
                         messageViewHolder.mainMessageContainer).let {
                         messageViewHolder.messagePicture = it.findViewById(R.id.message_picture)
-                        messageViewHolder.messagePicture?.setImageBitmap(message.picture)
+                        if (message.picture != null) {
+                            messageViewHolder.messagePicture?.setImageBitmap(message.picture)
+                        } else {
+                            Picasso.get().load(message.photoUrl).into(messageViewHolder.messagePicture)
+                        }
                     }
-
                 }
                 Message.Type.LINK -> {
                     //Set text
@@ -212,15 +218,17 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
                         messageViewHolder.messageLink?.setTextColor(
                             if (message.isRight) rightMessageTextColor else leftMessageTextColor
                         )
-
-                        if (message.isRight && rightBgDrawable != null) {
-                            messageViewHolder.messageLink?.setBackgroundDrawable(rightBgDrawable)
-                        } else if (leftBgDrawable != null) {
-                            messageViewHolder.messageLink?.setBackgroundDrawable(leftBgDrawable)
+                        if (user.getDrawable() != null) {
+                            messageViewHolder.messageLink?.setBackgroundDrawable(user.getDrawable())
                         } else {
+                            if (message.isRight && rightBgDrawable != null) {
+                                messageViewHolder.messageLink?.setBackgroundDrawable(rightBgDrawable)
+                            } else if (leftBgDrawable != null) {
+                                messageViewHolder.messageLink?.setBackgroundDrawable(leftBgDrawable)
+                            } else {
 
+                            }
                         }
-
                     }
 
                 }
@@ -239,13 +247,18 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
                             if (message.isRight) rightMessageTextColor else leftMessageTextColor
                         )
 
-                        if (message.isRight && rightBgDrawable != null) {
-                            messageViewHolder.messageText?.setBackgroundDrawable(rightBgDrawable)
-                        } else if (leftBgDrawable != null) {
-                            messageViewHolder.messageText?.setBackgroundDrawable(leftBgDrawable)
+                        if (user.getDrawable() != null) {
+                            messageViewHolder.messageText?.setBackgroundDrawable(user.getDrawable())
                         } else {
+                            if (message.isRight && rightBgDrawable != null) {
+                                messageViewHolder.messageText?.setBackgroundDrawable(rightBgDrawable)
+                            } else if (leftBgDrawable != null) {
+                                messageViewHolder.messageText?.setBackgroundDrawable(leftBgDrawable)
+                            } else {
 
+                            }
                         }
+
                     }
                 }
             }
