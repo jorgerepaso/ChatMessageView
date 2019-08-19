@@ -3,7 +3,7 @@
     <item>
         <shape android:shape="rectangle">
             <corners android:radius="@dimen/view_radius_normal" />
-            <solid android:color="@color/default_left_bubble_color" />
+            <solid android:color="#f8f9fa" />
         </shape>
     </item>
 </selector>
