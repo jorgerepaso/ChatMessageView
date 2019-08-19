@@ -1,7 +1,6 @@
 package com.github.bassaer.chatmessageview.model
 
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 
 class ChatUser(internal var id: Int?, internal var name: String, internal var icon: Bitmap) : IChatUser {
 
@@ -25,7 +24,7 @@ class ChatUser(internal var id: Int?, internal var name: String, internal var ic
         return null
     }
 
-    override fun getDrawable(): Drawable? {
+    override fun getDrawable(): Int? {
         return null
     }
 

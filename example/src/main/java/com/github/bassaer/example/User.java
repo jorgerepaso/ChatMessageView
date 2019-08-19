@@ -46,13 +46,13 @@ public class User implements IChatUser {
 
     @Nullable
     @Override
-    public Drawable getDrawable() {
+    public Integer getTextColor() {
         return null;
     }
 
     @Nullable
     @Override
-    public Integer getTextColor() {
+    public Integer getDrawable() {
         return null;
     }
 }

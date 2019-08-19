@@ -24,7 +24,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.github.bassaer.chatmessageview.model.IChatUser;
 import com.github.bassaer.chatmessageview.model.Message;
 import com.github.bassaer.chatmessageview.util.ChatBot;
-import com.github.bassaer.chatmessageview.util.DateFormatter;
 import com.github.bassaer.chatmessageview.view.ChatView;
 import com.github.bassaer.chatmessageview.view.MessageView;
 
@@ -162,12 +161,6 @@ public class MessengerActivity extends Activity {
                     .setUser(mUsers.get(0))
                     .setRight(true)
                     .setText(mChatView.getInputText())
-                    .hideIcon(false)
-                    .setDateCell(true)
-                    .setUsernameVisibility(false)
-                    .setStatusStyle(Message.Companion.getSTATUS_NONE())
-                    .setSendTimeFormatter(new MyTimeFormatter())
-                    .setDateFormatter(new DateFormatter())
                     .build();
 
 //                Message message = new Message.Builder()
@@ -217,10 +210,6 @@ public class MessengerActivity extends Activity {
                 .setUser(mUsers.get(1))
                 .setRight(false)
                 .setText(ChatBot.INSTANCE.talk(mUsers.get(0).getName(), sendText))
-                .setStatusStyle(Message.Companion.getSTATUS_NONE())
-                .setSendTimeFormatter(new MyTimeFormatter())
-                .setDateFormatter(new DateFormatter())
-                .setUsernameVisibility(false)
                 .build();
 
             if (sendText.equals(Message.Type.PICTURE.name())) {
@@ -266,13 +255,8 @@ public class MessengerActivity extends Activity {
                 .setRight(true)
                 .setText(Message.Type.PICTURE.name())
                 .setUser(mUsers.get(0))
-                .hideIcon(false)
                 .setPicture(picture)
-                .setUsernameVisibility(false)
                 .setType(Message.Type.PICTURE)
-                .setStatusStyle(Message.Companion.getSTATUS_NONE())
-                .setSendTimeFormatter(new MyTimeFormatter())
-                .setDateFormatter(new DateFormatter())
                 .build();
 
             mChatView.send(message);
@@ -283,7 +267,6 @@ public class MessengerActivity extends Activity {
             e.printStackTrace();
             Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show();
         }
-
     }
 
     private void initUsers() {
@@ -323,7 +306,7 @@ public class MessengerActivity extends Activity {
                         message.getUser().setIcon(user.getIcon());
                     }
                 }
-//                message.setStatusStyle(Message.Companion.getSTATUS_NONE());
+                message.setStatusStyle(Message.Companion.getSTATUS_NONE());
 //                message.setUsernameVisibility(false);
 //                message.setSendTimeFormatter(new MyTimeFormatter());
 //                message.setDateFormatter(new DateFormatter());

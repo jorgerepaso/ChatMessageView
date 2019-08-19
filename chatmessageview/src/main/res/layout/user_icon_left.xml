@@ -5,4 +5,4 @@
     android:layout_width="@dimen/icon_normal"
     android:layout_height="@dimen/icon_normal"
     android:layout_marginLeft="@dimen/spacing_tiny"
-    android:src="@drawable/ic_action_user"/>
+    android:src="@drawable/default_profile"/>

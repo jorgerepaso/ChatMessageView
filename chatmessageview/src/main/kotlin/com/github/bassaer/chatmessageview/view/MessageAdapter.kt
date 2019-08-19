@@ -159,7 +159,7 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
                     if (user.getIcon() != null) {
                         messageViewHolder.icon?.setImageBitmap(user.getIcon())
                     } else {
-                        Picasso.get().load(user.getUrl()).into(messageViewHolder.icon)
+                        Picasso.get().load(user.getUrl()).placeholder(R.drawable.default_profile).into(messageViewHolder.icon)
                     }
 
                 } else {
@@ -216,7 +216,9 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
                         )
                         //Set message text color
                         if (user.getTextColor() != null) {
-                            messageViewHolder.messageLink?.setTextColor(user.getTextColor()!!)
+                            messageViewHolder.messageLink?.setTextColor(
+                                ContextCompat.getColor(messageViewHolder.messageLink!!.context, user.getTextColor()!!)
+                            )
                         } else {
                             messageViewHolder.messageLink?.setTextColor(
                                 if (message.isRight) rightMessageTextColor else leftMessageTextColor
@@ -224,7 +226,10 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
                         }
 
                         if (user.getDrawable() != null) {
-                            messageViewHolder.messageLink?.setBackgroundDrawable(user.getDrawable())
+
+                            messageViewHolder.messageLink?.setBackgroundDrawable(
+                                ContextCompat.getDrawable(messageViewHolder.messageLink!!.context, user.getDrawable()!!)
+                            )
                         } else {
                             if (message.isRight && rightBgDrawable != null) {
                                 messageViewHolder.messageLink?.setBackgroundDrawable(rightBgDrawable)
@@ -249,7 +254,10 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
                         )
 
                         if (user.getTextColor() != null) {
-                            messageViewHolder.messageText?.setTextColor(user.getTextColor()!!)
+                            messageViewHolder.messageText?.setTextColor(
+                                ContextCompat.getColor(messageViewHolder.messageText!!.context, user.getTextColor()!!)
+                            )
+
                         } else {
                             messageViewHolder.messageText?.setTextColor(
                                 if (message.isRight) rightMessageTextColor else leftMessageTextColor
@@ -257,7 +265,10 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
                         }
 
                         if (user.getDrawable() != null) {
-                            messageViewHolder.messageText?.setBackgroundDrawable(user.getDrawable())
+                            messageViewHolder.messageText?.setBackgroundDrawable(
+                                ContextCompat.getDrawable(messageViewHolder.messageText!!.context, user.getDrawable()!!)
+                            )
+
                         } else {
                             if (message.isRight && rightBgDrawable != null) {
                                 messageViewHolder.messageText?.setBackgroundDrawable(rightBgDrawable)

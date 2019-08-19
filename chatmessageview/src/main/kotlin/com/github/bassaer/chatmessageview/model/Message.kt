@@ -137,6 +137,7 @@ class Message {
         sendTime = Calendar.getInstance()
         mSendTimeFormatter = DefaultTimeFormatter()
         mDateFormatter = DateFormatter()
+        statusTextFormatter = DefaultStatusTextFormatter()
         type = Type.TEXT
     }
 
