@@ -22,6 +22,7 @@ import com.github.bassaer.chatmessageview.model.Message
 
 import kotlinx.android.synthetic.main.chat_view.view.*
 import kotlinx.android.synthetic.main.option_button.view.*
+import kotlinx.android.synthetic.main.second_option_button.view.*
 
 /**
  * Chat view with edit view and send button
@@ -30,9 +31,7 @@ import kotlinx.android.synthetic.main.option_button.view.*
 class ChatView : LinearLayout {
     private lateinit var inputMethodManager: InputMethodManager
     private var sendIconId = R.drawable.ic_action_send
-    private var optionIconId = R.drawable.ic_action_add
     private var sendIconColor = ContextCompat.getColor(context, R.color.lightBlue500)
-    private var optionIconColor = ContextCompat.getColor(context, R.color.lightBlue500)
     private var isEnableAutoScroll = true
     private var isEnableAutoHidingKeyboard = true
     private var attribute: Attribute
@@ -60,6 +59,9 @@ class ChatView : LinearLayout {
         chatContainer.isEnabled = false
         if (attribute.isOptionButtonEnable) {
             LayoutInflater.from(context).inflate(R.layout.option_button, optionButtonContainer)
+        }
+        if (attribute.isSecondOptionButtonEnable) {
+            LayoutInflater.from(context).inflate(R.layout.second_option_button, optionButtonContainer)
         }
 
         messageView.init(attribute)
@@ -150,6 +152,12 @@ class ChatView : LinearLayout {
         optionButton?.setOnClickListener(listener)
     }
 
+    fun setOnClickSecondOptionButtonListener(listener: View.OnClickListener) {
+        if (secondOptionButton != null) {
+            secondOptionButton?.setOnClickListener(listener)
+        }
+    }
+
     var inputType: Int
         get() = inputBox.inputType
         set(type) {
@@ -177,11 +185,6 @@ class ChatView : LinearLayout {
         sendButton.setImageDrawable(getColoredDrawable(color, sendIconId))
     }
 
-    fun setOptionButtonColor(color: Int) {
-        optionIconColor = color
-        optionButton.setImageDrawable(getColoredDrawable(color, optionIconId))
-    }
-
     private fun getColoredDrawable(color: Int, iconId: Int): Drawable {
         val colorStateList = ColorStateList.valueOf(color)
         val icon = ContextCompat.getDrawable(context, iconId)!!
@@ -192,12 +195,17 @@ class ChatView : LinearLayout {
 
     fun setSendIcon(resId: Int) {
         sendIconId = resId
-        setSendButtonColor(sendIconColor)
+        sendButton.setImageResource(sendIconId)
     }
 
     fun setOptionIcon(resId: Int) {
-        optionIconId = resId
-        setOptionButtonColor(optionIconColor)
+        optionButton.setImageResource(resId)
+    }
+
+    fun setSecondOptionIcon(resId: Int) {
+        if (secondOptionButton != null) {
+            secondOptionButton.setImageResource(resId)
+        }
     }
 
     fun setInputTextHint(hint: String) {

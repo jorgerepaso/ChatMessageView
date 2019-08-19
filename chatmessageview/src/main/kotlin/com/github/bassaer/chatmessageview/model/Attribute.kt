@@ -16,6 +16,7 @@ class Attribute(context: Context, attrs: AttributeSet?) {
     var messageMaxWidth: Int
     var dateSeparatorFontSize: Float
     var isOptionButtonEnable: Boolean
+    var isSecondOptionButtonEnable: Boolean
     var isTextSelectable: Boolean
 
     init {
@@ -43,6 +44,10 @@ class Attribute(context: Context, attrs: AttributeSet?) {
         this.isOptionButtonEnable = typedArray.getBoolean(
                 R.styleable.MessageView_option_button_enable,
                 false
+        )
+        this.isSecondOptionButtonEnable = typedArray.getBoolean(
+            R.styleable.MessageView_option_second_button_enable,
+            false
         )
         this.isTextSelectable = typedArray.getBoolean(
                 R.styleable.MessageView_text_selectable,

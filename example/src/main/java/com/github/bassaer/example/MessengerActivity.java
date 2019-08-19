@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.VisibleForTesting;
 import androidx.core.content.ContextCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.github.bassaer.chatmessageview.model.IChatUser;
 import com.github.bassaer.chatmessageview.model.Message;
@@ -94,7 +95,9 @@ public class MessengerActivity extends Activity {
         mChatView.setSendButtonColor(ContextCompat.getColor(this, SEND_BUTTON_COLOR));
         mChatView.setSendIcon(SEND_ICON);
         mChatView.setOptionIcon(R.drawable.ic_account_circle);
-        mChatView.setOptionButtonColor(OPTION_BUTTON_COLOR);
+
+        mChatView.setSecondOptionIcon(R.drawable.ic_action_send);
+
         mChatView.setRightMessageTextColor(RIGHT_MESSAGE_TEXT_COLOR);
         mChatView.setLeftMessageTextColor(LEFT_MESSAGE_TEXT_COLOR);
         mChatView.setSendTimeTextColor(SEND_TIME_TEXT_COLOR);
@@ -107,6 +110,13 @@ public class MessengerActivity extends Activity {
         mChatView.setInputTextColor(ContextCompat.getColor(this, R.color.red500));
         mChatView.setInputTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
 
+
+        mChatView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+            }
+        });
         mChatView.setOnBubbleClickListener(new Message.OnBubbleClickListener() {
             @Override
             public void onClick(Message message) {
