@@ -125,6 +125,7 @@ class Message {
     enum class Type {
         TEXT,
         PICTURE,
+        FILE,
         MAP,
         LINK,
         HEADER

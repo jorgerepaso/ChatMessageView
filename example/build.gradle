@@ -35,6 +35,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':chatmessageview')
+//    implementation project(":chatmessageview-release")
     implementation "com.google.code.gson:gson:$gsonVersion"
     implementation "androidx.appcompat:appcompat:$androidXAppcompatVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"

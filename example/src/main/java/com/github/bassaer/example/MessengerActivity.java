@@ -109,13 +109,14 @@ public class MessengerActivity extends Activity {
         mChatView.setInputTextColor(ContextCompat.getColor(this, R.color.red500));
         mChatView.setInputTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
 
-
+        mChatView.setEnableSwipeRefresh(true);
         mChatView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
 
             }
         });
+
         mChatView.setOnBubbleClickListener(new Message.OnBubbleClickListener() {
             @Override
             public void onClick(Message message) {
@@ -159,6 +160,7 @@ public class MessengerActivity extends Activity {
                 //new message
                 Message message = new Message.Builder()
                     .setUser(mUsers.get(0))
+                    .setType(Message.Type.FILE)
                     .setRight(true)
                     .setText(mChatView.getInputText())
                     .build();
@@ -215,6 +217,7 @@ public class MessengerActivity extends Activity {
             if (sendText.equals(Message.Type.PICTURE.name())) {
                 receivedMessage.setText("Nice!");
             }
+            receivedMessage.setType(Message.Type.FILE);
 
             // This is a demo bot
             // Return within 3 seconds

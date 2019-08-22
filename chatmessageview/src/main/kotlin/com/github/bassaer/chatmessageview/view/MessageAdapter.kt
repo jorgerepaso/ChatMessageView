@@ -13,19 +13,14 @@ import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
-
+import com.bumptech.glide.Glide
 import com.github.bassaer.chatmessageview.R
 import com.github.bassaer.chatmessageview.model.Attribute
 import com.github.bassaer.chatmessageview.model.Message
-import com.squareup.picasso.Picasso
-
 import de.hdodenhof.circleimageview.CircleImageView
-
 import kotlinx.android.synthetic.main.date_cell.view.*
-
 import java.util.*
 
 /**
@@ -159,7 +154,12 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
                     if (user.getIcon() != null) {
                         messageViewHolder.icon?.setImageBitmap(user.getIcon())
                     } else {
-                        Picasso.get().load(user.getUrl()).placeholder(R.drawable.default_profile).into(messageViewHolder.icon)
+                        Glide.with(messageViewHolder.icon!!.context)
+                            .load(user.getUrl())
+                            .placeholder(R.drawable.default_profile)
+                            .error(R.drawable.default_profile)
+                            .centerCrop()
+                            .into(messageViewHolder.icon!!)
                     }
 
                 } else {
@@ -198,8 +198,19 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
                         if (message.picture != null) {
                             messageViewHolder.messagePicture?.setImageBitmap(message.picture)
                         } else {
-                            Picasso.get().load(message.photoUrl).into(messageViewHolder.messagePicture)
+                            Glide.with(messageViewHolder.messagePicture!!.context)
+                                .load(message.photoUrl)
+                                .centerCrop()
+                                .into(messageViewHolder.messagePicture!!)
                         }
+                    }
+                }
+                Message.Type.FILE -> {
+                    //Set picture
+                    layoutInflater.inflate(R.layout.file_left,
+                        messageViewHolder.mainMessageContainer).let {
+                        messageViewHolder.fileText = it.findViewById(R.id.message_text)
+                        messageViewHolder.fileText?.text = message.text
                     }
                 }
                 Message.Type.LINK -> {
@@ -435,6 +446,7 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
         var icon: CircleImageView? = null
         var iconContainer: FrameLayout? = null
         var messagePicture: RoundImageView? = null
+        var fileText: TextView? = null
         var messageLink: TextView? = null
         var messageText: TextView? = null
         var timeText: TextView? = null
