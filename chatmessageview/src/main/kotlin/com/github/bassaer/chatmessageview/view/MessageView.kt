@@ -155,11 +155,19 @@ class MessageView : ListView, View.OnFocusChangeListener {
         if (list.isEmpty()) {
             return result
         }
-        result.add(list[0].dateSeparateText)
-        result.add(list[0])
+
+        val message = list[0]
+        result.add(message.dateSeparateText)
+        if (message.type == Message.Type.HEADER) {
+            result.add(message.text!!)
+        } else {
+            result.add(message)
+        }
+
         if (list.size < 2) {
             return result
         }
+
         for (i in 1 until list.size) {
             val prevMessage = list[i - 1]
             val currMessage = list[i]
