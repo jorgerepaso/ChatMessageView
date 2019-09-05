@@ -9,10 +9,7 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import com.bumptech.glide.Glide
@@ -77,257 +74,274 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
         val item = getItem(position)
         var view = convertView
 
-        if (item is String) {
-            // item is Date label
-            lateinit var dateViewHolder: DateViewHolder
-            view?.let {
-                dateViewHolder = it.tag as DateViewHolder
-            } ?: let {
-                view = layoutInflater.inflate(R.layout.date_cell, null)
-                dateViewHolder = DateViewHolder()
-                dateViewHolder.dateLabelText = view?.dateLabelText
-                view?.tag = dateViewHolder
+        when (item) {
+            is View -> {
+                lateinit var viewHolder: CustomViewHolder
+                view?.let {
+                    viewHolder = it.tag as CustomViewHolder
+                } ?: let {
+                    view = layoutInflater.inflate(R.layout.custom_view_cell, null)
+                    viewHolder = CustomViewHolder()
+                    viewHolder.root = view?.findViewById(R.id.layout_root)
+                    view?.tag = viewHolder
+                }
+
+                viewHolder.root?.removeAllViews()
+                viewHolder.root?.addView(item)
             }
+            is String -> {
+                // item is Date label
+                lateinit var dateViewHolder: DateViewHolder
+                view?.let {
+                    dateViewHolder = it.tag as DateViewHolder
+                } ?: let {
+                    view = layoutInflater.inflate(R.layout.date_cell, null)
+                    dateViewHolder = DateViewHolder()
+                    dateViewHolder.dateLabelText = view?.dateLabelText
+                    view?.tag = dateViewHolder
+                }
 
-            dateViewHolder.dateLabelText?.text = item
-            dateViewHolder.dateLabelText?.setTextColor(dateLabelColor)
-            dateViewHolder.dateLabelText?.setTextSize(TypedValue.COMPLEX_UNIT_PX, attribute.dateSeparatorFontSize)
+                dateViewHolder.dateLabelText?.text = item
+                dateViewHolder.dateLabelText?.setTextColor(dateLabelColor)
+                dateViewHolder.dateLabelText?.setTextSize(TypedValue.COMPLEX_UNIT_PX, attribute.dateSeparatorFontSize)
 
-        } else {
-            //Item is a message
-            lateinit var messageViewHolder: MessageViewHolder
-            val message: Message = item as Message
-            if (position > 0) {
-                getItem(position - 1).let {
-                    if (it is Message && it.user.getId() == message.user.getId()) {
-                        //If send same person, hide username and icon.
-                        message.iconVisibility = false
-                        message.usernameVisibility = false
+            }
+            else -> {
+                //Item is a message
+                lateinit var messageViewHolder: MessageViewHolder
+                val message: Message = item as Message
+                if (position > 0) {
+                    getItem(position - 1).let {
+                        if (it is Message && it.user.getId() == message.user.getId()) {
+                            //If send same person, hide username and icon.
+                            message.iconVisibility = false
+                            message.usernameVisibility = false
+                        }
                     }
                 }
-            }
 
-            val user = message.user
+                val user = message.user
 
-            view?.let {
-                messageViewHolder = it.tag as MessageViewHolder
-            } ?: run {
-                view = layoutInflater
-                    .inflate(if (message.isRight) R.layout.message_view_right else R.layout.message_view_left,
-                        null)
-                messageViewHolder = MessageViewHolder()
-                messageViewHolder.iconContainer = view?.findViewById(R.id.userIconContainer)
-                messageViewHolder.mainMessageContainer = view?.findViewById(R.id.mainMessageContainer)
-                messageViewHolder.timeText = view?.findViewById(R.id.timeLabelText)
-                messageViewHolder.usernameContainer = view?.findViewById(R.id.usernameContainer)
-                messageViewHolder.statusContainer = view?.findViewById(R.id.statusContainer)
-                view?.tag = messageViewHolder
-            }
-
-            //Remove view in each container
-            messageViewHolder.iconContainer?.removeAllViews()
-            messageViewHolder.usernameContainer?.removeAllViews()
-            messageViewHolder.statusContainer?.removeAllViews()
-            messageViewHolder.mainMessageContainer?.removeAllViews()
-
-            if (user.getName() != null && message.usernameVisibility) {
-                layoutInflater.inflate(
-                    if (message.isRight) R.layout.user_name_right else R.layout.user_name_left,
-                    messageViewHolder.usernameContainer).let {
-                    messageViewHolder.username = it.findViewById(R.id.message_user_name)
-                    messageViewHolder.username?.text = user.getName()
-                    messageViewHolder.username?.setTextColor(usernameTextColor)
-                    messageViewHolder.username?.setTextSize(TypedValue.COMPLEX_UNIT_PX, attribute.usernameFontSize)
+                view?.let {
+                    messageViewHolder = it.tag as MessageViewHolder
+                } ?: run {
+                    view = layoutInflater
+                        .inflate(if (message.isRight) R.layout.message_view_right else R.layout.message_view_left,
+                            null)
+                    messageViewHolder = MessageViewHolder()
+                    messageViewHolder.iconContainer = view?.findViewById(R.id.userIconContainer)
+                    messageViewHolder.mainMessageContainer = view?.findViewById(R.id.mainMessageContainer)
+                    messageViewHolder.timeText = view?.findViewById(R.id.timeLabelText)
+                    messageViewHolder.usernameContainer = view?.findViewById(R.id.usernameContainer)
+                    messageViewHolder.statusContainer = view?.findViewById(R.id.statusContainer)
+                    view?.tag = messageViewHolder
                 }
 
-            }
+                //Remove view in each container
+                messageViewHolder.iconContainer?.removeAllViews()
+                messageViewHolder.usernameContainer?.removeAllViews()
+                messageViewHolder.statusContainer?.removeAllViews()
+                messageViewHolder.mainMessageContainer?.removeAllViews()
 
-            // if false, icon is not shown.
-            if (!message.isIconHided) {
-                layoutInflater.inflate(if (message.isRight) R.layout.user_icon_right else R.layout.user_icon_left,
-                    messageViewHolder.iconContainer).let {
-                    messageViewHolder.icon = it.findViewById(R.id.user_icon)
-                }
-
-                if (message.iconVisibility) {
-                    //if false, set default icon.
-                    if (user.getIcon() != null) {
-                        messageViewHolder.icon?.setImageBitmap(user.getIcon())
-                    } else {
-                        Glide.with(messageViewHolder.icon!!.context)
-                            .load(user.getUrl())
-                            .placeholder(R.drawable.default_profile)
-                            .error(R.drawable.default_profile)
-                            .centerCrop()
-                            .into(messageViewHolder.icon!!)
-                    }
-
-                } else {
-                    //Show nothing
-                    messageViewHolder.icon?.visibility = View.INVISIBLE
-                }
-            }
-
-
-            //Show message status
-            if (message.statusStyle == Message.STATUS_ICON || message.statusStyle == Message.STATUS_ICON_RIGHT_ONLY) {
-                //Show message status icon
-                layoutInflater.inflate(R.layout.message_status_icon, messageViewHolder.statusContainer).let {
-                    messageViewHolder.statusIcon = it.findViewById(R.id.status_icon_image_view)
-                    messageViewHolder.statusIcon?.setImageDrawable(message.statusIcon)
-                    setColorDrawable(statusColor, messageViewHolder.statusIcon?.drawable)
-                }
-
-            } else if (message.statusStyle == Message.STATUS_TEXT || message.statusStyle == Message.STATUS_TEXT_RIGHT_ONLY) {
-                //Show message status text
-                layoutInflater.inflate(R.layout.message_status_text, messageViewHolder.statusContainer).let {
-                    messageViewHolder.statusText = it.findViewById(R.id.status_text_view)
-                    messageViewHolder.statusText?.text = message.statusText
-                    messageViewHolder.statusText?.setTextColor(statusColor)
-                }
-            }
-
-            //Set text or picture on message bubble
-            when (message.type) {
-                Message.Type.PICTURE -> {
-                    //Set picture
+                if (user.getName() != null && message.usernameVisibility) {
                     layoutInflater.inflate(
-                        if (message.isRight) R.layout.message_picture_right else R.layout.message_picture_left,
-                        messageViewHolder.mainMessageContainer).let {
-                        messageViewHolder.messagePicture = it.findViewById(R.id.message_picture)
-                        if (message.picture != null) {
-                            messageViewHolder.messagePicture?.setImageBitmap(message.picture)
+                        if (message.isRight) R.layout.user_name_right else R.layout.user_name_left,
+                        messageViewHolder.usernameContainer).let {
+                        messageViewHolder.username = it.findViewById(R.id.message_user_name)
+                        messageViewHolder.username?.text = user.getName()
+                        messageViewHolder.username?.setTextColor(usernameTextColor)
+                        messageViewHolder.username?.setTextSize(TypedValue.COMPLEX_UNIT_PX, attribute.usernameFontSize)
+                    }
+
+                }
+
+                // if false, icon is not shown.
+                if (!message.isIconHided) {
+                    layoutInflater.inflate(if (message.isRight) R.layout.user_icon_right else R.layout.user_icon_left,
+                        messageViewHolder.iconContainer).let {
+                        messageViewHolder.icon = it.findViewById(R.id.user_icon)
+                    }
+
+                    if (message.iconVisibility) {
+                        //if false, set default icon.
+                        if (user.getIcon() != null) {
+                            messageViewHolder.icon?.setImageBitmap(user.getIcon())
                         } else {
-                            Glide.with(messageViewHolder.messagePicture!!.context)
-                                .load(message.photoUrl)
+                            Glide.with(messageViewHolder.icon!!.context)
+                                .load(user.getUrl())
+                                .placeholder(R.drawable.default_profile)
+                                .error(R.drawable.default_profile)
                                 .centerCrop()
-                                .into(messageViewHolder.messagePicture!!)
-                        }
-                    }
-                }
-                Message.Type.FILE -> {
-                    //Set picture
-                    layoutInflater.inflate(R.layout.file_left,
-                        messageViewHolder.mainMessageContainer).let {
-                        messageViewHolder.fileText = it.findViewById(R.id.message_text)
-                        messageViewHolder.fileText?.text = message.text
-                    }
-                }
-                Message.Type.LINK -> {
-                    //Set text
-                    layoutInflater.inflate(
-                        if (message.isRight) R.layout.message_link_right else R.layout.message_link_left,
-                        messageViewHolder.mainMessageContainer).let {
-                        messageViewHolder.messageLink = it.findViewById(R.id.message_link)
-                        messageViewHolder.messageLink?.text = message.text
-                        //Set bubble color
-                        setColorDrawable(
-                            if (message.isRight) rightBubbleColor else leftBubbleColor,
-                            messageViewHolder.messageLink?.background
-                        )
-                        //Set message text color
-                        if (user.getTextColor() != null) {
-                            messageViewHolder.messageLink?.setTextColor(
-                                ContextCompat.getColor(messageViewHolder.messageLink!!.context, user.getTextColor()!!)
-                            )
-                        } else {
-                            messageViewHolder.messageLink?.setTextColor(
-                                if (message.isRight) rightMessageTextColor else leftMessageTextColor
-                            )
+                                .into(messageViewHolder.icon!!)
                         }
 
-                        if (user.getDrawable() != null) {
+                    } else {
+                        //Show nothing
+                        messageViewHolder.icon?.visibility = View.INVISIBLE
+                    }
+                }
 
-                            messageViewHolder.messageLink?.setBackgroundDrawable(
-                                ContextCompat.getDrawable(messageViewHolder.messageLink!!.context, user.getDrawable()!!)
-                            )
-                        } else {
-                            if (message.isRight && rightBgDrawable != null) {
-                                messageViewHolder.messageLink?.setBackgroundDrawable(rightBgDrawable)
-                            } else if (leftBgDrawable != null) {
-                                messageViewHolder.messageLink?.setBackgroundDrawable(leftBgDrawable)
+
+                //Show message status
+                if (message.statusStyle == Message.STATUS_ICON || message.statusStyle == Message.STATUS_ICON_RIGHT_ONLY) {
+                    //Show message status icon
+                    layoutInflater.inflate(R.layout.message_status_icon, messageViewHolder.statusContainer).let {
+                        messageViewHolder.statusIcon = it.findViewById(R.id.status_icon_image_view)
+                        messageViewHolder.statusIcon?.setImageDrawable(message.statusIcon)
+                        setColorDrawable(statusColor, messageViewHolder.statusIcon?.drawable)
+                    }
+
+                } else if (message.statusStyle == Message.STATUS_TEXT || message.statusStyle == Message.STATUS_TEXT_RIGHT_ONLY) {
+                    //Show message status text
+                    layoutInflater.inflate(R.layout.message_status_text, messageViewHolder.statusContainer).let {
+                        messageViewHolder.statusText = it.findViewById(R.id.status_text_view)
+                        messageViewHolder.statusText?.text = message.statusText
+                        messageViewHolder.statusText?.setTextColor(statusColor)
+                    }
+                }
+
+                //Set text or picture on message bubble
+                when (message.type) {
+                    Message.Type.PICTURE -> {
+                        //Set picture
+                        layoutInflater.inflate(
+                            if (message.isRight) R.layout.message_picture_right else R.layout.message_picture_left,
+                            messageViewHolder.mainMessageContainer).let {
+                            messageViewHolder.messagePicture = it.findViewById(R.id.message_picture)
+                            if (message.picture != null) {
+                                messageViewHolder.messagePicture?.setImageBitmap(message.picture)
                             } else {
+                                Glide.with(messageViewHolder.messagePicture!!.context)
+                                    .load(message.photoUrl)
+                                    .centerCrop()
+                                    .into(messageViewHolder.messagePicture!!)
                             }
                         }
                     }
-
-                }
-                else -> {
-                    layoutInflater.inflate(
-                        if (message.isRight) R.layout.message_text_right else R.layout.message_text_left,
-                        messageViewHolder.mainMessageContainer).let {
-                        messageViewHolder.messageText = it.findViewById(R.id.message_text)
-                        messageViewHolder.messageText?.setTextIsSelectable(attribute.isTextSelectable)
-                        messageViewHolder.messageText?.text = message.text
-                        setColorDrawable(
-                            if (message.isRight) rightBubbleColor else leftBubbleColor,
-                            messageViewHolder.messageText?.background
-                        )
-
-                        if (user.getTextColor() != null) {
-                            messageViewHolder.messageText?.setTextColor(
-                                ContextCompat.getColor(messageViewHolder.messageText!!.context, user.getTextColor()!!)
-                            )
-
-                        } else {
-                            messageViewHolder.messageText?.setTextColor(
-                                if (message.isRight) rightMessageTextColor else leftMessageTextColor
-                            )
+                    Message.Type.FILE -> {
+                        //Set picture
+                        layoutInflater.inflate(R.layout.file_left,
+                            messageViewHolder.mainMessageContainer).let {
+                            messageViewHolder.fileText = it.findViewById(R.id.message_text)
+                            messageViewHolder.fileText?.text = message.text
                         }
-
-                        if (user.getDrawable() != null) {
-                            messageViewHolder.messageText?.setBackgroundDrawable(
-                                ContextCompat.getDrawable(messageViewHolder.messageText!!.context, user.getDrawable()!!)
+                    }
+                    Message.Type.LINK -> {
+                        //Set text
+                        layoutInflater.inflate(
+                            if (message.isRight) R.layout.message_link_right else R.layout.message_link_left,
+                            messageViewHolder.mainMessageContainer).let {
+                            messageViewHolder.messageLink = it.findViewById(R.id.message_link)
+                            messageViewHolder.messageLink?.text = message.text
+                            //Set bubble color
+                            setColorDrawable(
+                                if (message.isRight) rightBubbleColor else leftBubbleColor,
+                                messageViewHolder.messageLink?.background
                             )
-
-                        } else {
-                            if (message.isRight && rightBgDrawable != null) {
-                                messageViewHolder.messageText?.setBackgroundDrawable(rightBgDrawable)
-                            } else if (leftBgDrawable != null) {
-                                messageViewHolder.messageText?.setBackgroundDrawable(leftBgDrawable)
+                            //Set message text color
+                            if (user.getTextColor() != null) {
+                                messageViewHolder.messageLink?.setTextColor(
+                                    ContextCompat.getColor(messageViewHolder.messageLink!!.context, user.getTextColor()!!)
+                                )
                             } else {
+                                messageViewHolder.messageLink?.setTextColor(
+                                    if (message.isRight) rightMessageTextColor else leftMessageTextColor
+                                )
+                            }
 
+                            if (user.getDrawable() != null) {
+
+                                messageViewHolder.messageLink?.setBackgroundDrawable(
+                                    ContextCompat.getDrawable(messageViewHolder.messageLink!!.context, user.getDrawable()!!)
+                                )
+                            } else {
+                                if (message.isRight && rightBgDrawable != null) {
+                                    messageViewHolder.messageLink?.setBackgroundDrawable(rightBgDrawable)
+                                } else if (leftBgDrawable != null) {
+                                    messageViewHolder.messageLink?.setBackgroundDrawable(leftBgDrawable)
+                                } else {
+                                }
                             }
                         }
 
                     }
+                    else -> {
+                        layoutInflater.inflate(
+                            if (message.isRight) R.layout.message_text_right else R.layout.message_text_left,
+                            messageViewHolder.mainMessageContainer).let {
+                            messageViewHolder.messageText = it.findViewById(R.id.message_text)
+                            messageViewHolder.messageText?.setTextIsSelectable(attribute.isTextSelectable)
+                            messageViewHolder.messageText?.text = message.text
+                            setColorDrawable(
+                                if (message.isRight) rightBubbleColor else leftBubbleColor,
+                                messageViewHolder.messageText?.background
+                            )
+
+                            if (user.getTextColor() != null) {
+                                messageViewHolder.messageText?.setTextColor(
+                                    ContextCompat.getColor(messageViewHolder.messageText!!.context, user.getTextColor()!!)
+                                )
+
+                            } else {
+                                messageViewHolder.messageText?.setTextColor(
+                                    if (message.isRight) rightMessageTextColor else leftMessageTextColor
+                                )
+                            }
+
+                            if (user.getDrawable() != null) {
+                                messageViewHolder.messageText?.setBackgroundDrawable(
+                                    ContextCompat.getDrawable(messageViewHolder.messageText!!.context, user.getDrawable()!!)
+                                )
+
+                            } else {
+                                if (message.isRight && rightBgDrawable != null) {
+                                    messageViewHolder.messageText?.setBackgroundDrawable(rightBgDrawable)
+                                } else if (leftBgDrawable != null) {
+                                    messageViewHolder.messageText?.setBackgroundDrawable(leftBgDrawable)
+                                } else {
+
+                                }
+                            }
+
+                        }
+                    }
                 }
-            }
 
-            messageViewHolder.timeText?.text = message.timeText
+                messageViewHolder.timeText?.text = message.timeText
 
-            messageViewHolder.timeText?.setTextColor(sendTimeTextColor)
+                messageViewHolder.timeText?.setTextColor(sendTimeTextColor)
 
-            //Set Padding
-            view?.setPadding(0, messageTopMargin, 0, messageBottomMargin)
+                //Set Padding
+                view?.setPadding(0, messageTopMargin, 0, messageBottomMargin)
 
-            if (messageViewHolder.mainMessageContainer != null) {
-                //Set bubble click listener
-                messageViewHolder.mainMessageContainer?.setOnClickListener { bubbleClickListener?.onClick(message) }
+                if (messageViewHolder.mainMessageContainer != null) {
+                    //Set bubble click listener
+                    messageViewHolder.mainMessageContainer?.setOnClickListener { bubbleClickListener?.onClick(message) }
 
 
-                //Set bubble long click listener
-                messageViewHolder.mainMessageContainer?.setOnLongClickListener {
-                    bubbleLongClickListener?.onLongClick(message)
-                    true//ignore onclick event
-                }
-            }
-
-            //Set icon events if icon is shown
-            if (message.iconVisibility && messageViewHolder.icon != null) {
-                //Set icon click listener
-                messageViewHolder.icon?.setOnClickListener { iconClickListener?.onIconClick(message) }
-
-                messageViewHolder.icon?.setOnLongClickListener {
-                    iconLongClickListener?.onIconLongClick(message)
-                    true
+                    //Set bubble long click listener
+                    messageViewHolder.mainMessageContainer?.setOnLongClickListener {
+                        bubbleLongClickListener?.onLongClick(message)
+                        true//ignore onclick event
+                    }
                 }
 
-            }
+                //Set icon events if icon is shown
+                if (message.iconVisibility && messageViewHolder.icon != null) {
+                    //Set icon click listener
+                    messageViewHolder.icon?.setOnClickListener { iconClickListener?.onIconClick(message) }
 
-            messageViewHolder.messageText?.setTextSize(TypedValue.COMPLEX_UNIT_PX, attribute.messageFontSize)
-            messageViewHolder.messageText?.maxWidth = attribute.messageMaxWidth
-            messageViewHolder.timeText?.setTextSize(TypedValue.COMPLEX_UNIT_PX, attribute.timeLabelFontSize)
+                    messageViewHolder.icon?.setOnLongClickListener {
+                        iconLongClickListener?.onIconLongClick(message)
+                        true
+                    }
+
+                }
+
+                messageViewHolder.messageText?.setTextSize(TypedValue.COMPLEX_UNIT_PX, attribute.messageFontSize)
+                messageViewHolder.messageText?.maxWidth = attribute.messageMaxWidth
+                messageViewHolder.timeText?.setTextSize(TypedValue.COMPLEX_UNIT_PX, attribute.timeLabelFontSize)
+            }
         }
 
         return view!!
@@ -461,6 +475,10 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
 
     internal inner class DateViewHolder {
         var dateLabelText: TextView? = null
+    }
+
+    internal inner class CustomViewHolder {
+        var root: LinearLayout? = null
     }
 
 

@@ -33,6 +33,8 @@ class MessageView : ListView, View.OnFocusChangeListener {
 
     private lateinit var keyboardAppearListener: OnKeyboardAppearListener
 
+    private var customView: View? = null
+
     /**
      * MessageView is refreshed at this time
      */
@@ -158,6 +160,11 @@ class MessageView : ListView, View.OnFocusChangeListener {
 
         val message = list[0]
         result.add(message.dateSeparateText)
+
+        if (customView != null) {
+            result.add(customView!!)
+        }
+
         if (message.type == Message.Type.HEADER) {
             result.add(message.text!!)
         } else {
@@ -316,6 +323,13 @@ class MessageView : ListView, View.OnFocusChangeListener {
         attribute.dateSeparatorFontSize = size
         setAttribute()
     }
+
+    fun addCustomView(view: View) {
+        this.customView = view
+        refresh()
+    }
+
+    fun getCustomView(): View? = customView
 
     private fun setAttribute() {
         messageAdapter.setAttribute(attribute)
