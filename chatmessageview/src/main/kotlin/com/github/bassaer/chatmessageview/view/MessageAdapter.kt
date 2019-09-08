@@ -20,6 +20,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.date_cell.view.*
 import java.util.*
 
+
 /**
  * Custom list adapter for the chat timeline
  * Created by nakayama on 2016/08/08.
@@ -87,6 +88,9 @@ class MessageAdapter(context: Context, resource: Int, private val objects: List<
                 }
 
                 viewHolder.root?.removeAllViews()
+                if (item.parent != null) {
+                    (item.parent as ViewGroup).removeView(item) // <- fix
+                }
                 viewHolder.root?.addView(item)
             }
             is String -> {
