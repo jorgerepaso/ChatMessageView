@@ -24,6 +24,7 @@ class MessageView : ListView, View.OnFocusChangeListener {
      * All contents such as right message, left message, date label
      */
     private var chatList: MutableList<Any> = ArrayList()
+
     /**
      * Only messages
      */
@@ -101,7 +102,6 @@ class MessageView : ListView, View.OnFocusChangeListener {
     fun setMessage(message: Message) {
         addMessage(message)
         refresh()
-        messageAdapter.notifyDataSetChanged()
     }
 
     /**
@@ -123,16 +123,6 @@ class MessageView : ListView, View.OnFocusChangeListener {
      */
     private fun addMessage(message: Message) {
         messageList.add(message)
-        if (messageList.size == 1) {
-            chatList.add(message.dateSeparateText)
-            chatList.add(message)
-            return
-        }
-        val prevMessage = messageList[messageList.size - 2]
-        if (!TimeUtils.isDisplayTimeInterval(prevMessage.sendTime, message.sendTime, timeInterval)) {
-            chatList.add(message.dateSeparateText)
-        }
-        chatList.add(message)
     }
 
     private fun refresh() {
@@ -168,7 +158,7 @@ class MessageView : ListView, View.OnFocusChangeListener {
         if (message.type == Message.Type.HEADER) {
             result.add(message.text!!)
         } else {
-            result.add(message)
+            result.add(displayIconMessage(message, 1))
         }
 
         if (list.size < 2) {
@@ -185,7 +175,7 @@ class MessageView : ListView, View.OnFocusChangeListener {
             if (currMessage.type == Message.Type.HEADER) {
                 result.add(currMessage.text!!)
             } else {
-                result.add(currMessage)
+                result.add(displayIconMessage(currMessage, i + 1))
             }
 
 
@@ -193,12 +183,26 @@ class MessageView : ListView, View.OnFocusChangeListener {
         return result
     }
 
+    private fun displayIconMessage(message: Message, position: Int): Message {
+        if (position < messageList.size) {
+            val nextMessage = messageList[position]
+            if (nextMessage.type == Message.Type.HEADER) {
+                displayIconMessage(message, position + 1)
+            } else {
+                if (nextMessage.user.getId() == message.user.getId()) {
+                    message.iconVisibility = nextMessage.user.getId() != message.user.getId()
+                }
+            }
+        }
+        return message
+    }
+
     /**
      * Sort messages
      */
     private fun sortMessages(list: List<Message>?) {
-        val dateComparator = MessageDateComparator()
         if (list != null) {
+            val dateComparator = MessageDateComparator()
             Collections.sort(list, dateComparator)
         }
     }

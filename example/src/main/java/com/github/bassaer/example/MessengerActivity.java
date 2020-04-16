@@ -203,38 +203,42 @@ public class MessengerActivity extends Activity {
         startActivityForResult(intent, READ_REQUEST_CODE);
     }
 
+    private void setReceivedMessage(String sendText) {
+        //Receive message
+        final Message receivedMessage = new Message.Builder()
+            .setUser(mUsers.get(1))
+            .setRight(false)
+            .setText(ChatBot.INSTANCE.talk(mUsers.get(0).getName(), sendText))
+            .build();
+
+        if (sendText.equals(Message.Type.PICTURE.name())) {
+            receivedMessage.setText("Nice!");
+        }
+        receivedMessage.setType(Message.Type.FILE);
+
+        // This is a demo bot
+        // Return within 3 seconds
+        if (mReplyDelay < 0) {
+            mReplyDelay = (new Random().nextInt(4) + 1) * 1000;
+        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mChatView.receive(receivedMessage);
+                //Add message list
+                mMessageList.add(receivedMessage);
+            }
+        }, mReplyDelay);
+    }
+
     private void receiveMessage(String sendText) {
         //Ignore hey
-        if (!sendText.contains("Hey")) {
+        if (!sendText.toLowerCase().contains("hey")) {
             if (sendText.contains("a")) {
                 return;
             }
 
-            //Receive message
-            final Message receivedMessage = new Message.Builder()
-                .setUser(mUsers.get(1))
-                .setRight(false)
-                .setText(ChatBot.INSTANCE.talk(mUsers.get(0).getName(), sendText))
-                .build();
-
-            if (sendText.equals(Message.Type.PICTURE.name())) {
-                receivedMessage.setText("Nice!");
-            }
-            receivedMessage.setType(Message.Type.FILE);
-
-            // This is a demo bot
-            // Return within 3 seconds
-            if (mReplyDelay < 0) {
-                mReplyDelay = (new Random().nextInt(4) + 1) * 1000;
-            }
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mChatView.receive(receivedMessage);
-                    //Add message list
-                    mMessageList.add(receivedMessage);
-                }
-            }, mReplyDelay);
+            setReceivedMessage(sendText);
         } else {
             final Message mess = new Message.Builder()
                 .setUser(mUsers.get(0))
@@ -245,6 +249,10 @@ public class MessengerActivity extends Activity {
             mChatView.receive(mess);
             //Add message list
             mMessageList.add(mess);
+
+            if (sendText.equalsIgnoreCase("hey")) {
+                setReceivedMessage(sendText);
+            }
         }
     }
 
