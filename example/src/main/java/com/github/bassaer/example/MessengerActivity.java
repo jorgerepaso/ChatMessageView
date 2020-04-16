@@ -206,6 +206,9 @@ public class MessengerActivity extends Activity {
     private void receiveMessage(String sendText) {
         //Ignore hey
         if (!sendText.contains("Hey")) {
+            if (sendText.contains("a")) {
+                return;
+            }
 
             //Receive message
             final Message receivedMessage = new Message.Builder()
@@ -234,7 +237,7 @@ public class MessengerActivity extends Activity {
             }, mReplyDelay);
         } else {
             final Message mess = new Message.Builder()
-                .setUser(mUsers.get(1))
+                .setUser(mUsers.get(0))
                 .setType(Message.Type.HEADER)
                 .setText("Heinrich has joined the conversation")
                 .build();
